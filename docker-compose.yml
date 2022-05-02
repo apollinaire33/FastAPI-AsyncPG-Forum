@@ -1,0 +1,21 @@
+version: '2.1'
+
+services:
+
+  db:
+    image: postgres
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  core:
+    build: ./core
+    volumes:
+      - ./core:/code
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - .env
