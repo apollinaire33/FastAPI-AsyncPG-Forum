@@ -1,8 +1,8 @@
-"""add post models
+"""add post_category & post
 
-Revision ID: faf3099b8dd8
+Revision ID: 8ea161af29bb
 Revises: 2d9a8740551d
-Create Date: 2022-05-03 15:05:58.384839
+Create Date: 2022-05-07 07:38:23.166342
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'faf3099b8dd8'
+revision = '8ea161af29bb'
 down_revision = '2d9a8740551d'
 branch_labels = None
 depends_on = None
@@ -30,9 +30,10 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=100), nullable=False),
     sa.Column('text', sa.Text(), nullable=True),
-    sa.Column('time_created', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('time_created', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('time_updated', sa.DateTime(timezone=True), nullable=True),
     sa.Column('category', sa.String(), nullable=False),
+    sa.Column('validated', sa.Boolean(), server_default='false', nullable=True),
     sa.ForeignKeyConstraint(['category'], ['post_categories.title'], ),
     sa.PrimaryKeyConstraint('id')
     )
