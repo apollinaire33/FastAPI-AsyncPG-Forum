@@ -13,5 +13,5 @@ JOSE = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=float(os.environ.get('REFRESH_TOKEN_EXPIRE_DAYS'))),
 
     'ALGORITHM': 'HS256',
-    'SECRET_KEY': os.environ.get('JWT_SIGNING_KEY'),
+    'SECRET_KEY': os.environ.get('JWT_SECRET_KEY'),
 }

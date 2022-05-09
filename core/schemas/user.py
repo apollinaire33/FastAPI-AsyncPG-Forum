@@ -9,7 +9,6 @@ class UserSchema(BaseModel):
     id: int
     username: str
     email: str
-    password: str
     role: RolesEnum
     date_joined: datetime
     active: bool
@@ -18,10 +17,18 @@ class UserSchema(BaseModel):
         orm_mode = True
 
 
-class UserCreateUpdateSchema(BaseModel):
+class UserCreateSchema(BaseModel):
     username: str
     email: str
     password: str
+
+    class Config:
+        orm_mode = True
+
+
+class UserUpdateSchema(BaseModel):
+    username: str
+    email: str
 
     class Config:
         orm_mode = True

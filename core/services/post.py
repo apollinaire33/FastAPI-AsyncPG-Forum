@@ -1,12 +1,11 @@
-from typing import Optional, Union, Coroutine
+from typing import Optional, Union
 
-from fastapi import HTTPException
-from sqlalchemy import select, Column
-from sqlalchemy.engine.result import ChunkedIteratorResult
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from db.database import get_db
 from models.post import Post, PostCategory
-from schemas.post import PostCreateUpdateSchema, PostCategoryCreateUpdateSchema
+from schemas.post import PostCategoryCreateUpdateSchema
 from services.base import BaseService
 
 
@@ -32,3 +31,9 @@ class PostService(BaseService[PostCategory]):
     
     async def list_unvalidated(self):
         return await super().list(Post.validated == False)
+
+
+def get_category_service(
+        session: AsyncSession = Depends(get_db),
+) -> PostCategoryService:
+    return PostCategoryService(session)
