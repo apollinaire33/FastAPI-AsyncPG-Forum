@@ -10,8 +10,8 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement='auto', index=True)
-    username = Column(String(50), nullable=False)
-    email = Column(String(50), nullable=False)
+    username = Column(String(50), nullable=False, unique=True)
+    email = Column(String(50), nullable=False, unique=True)
     password = Column(String(128), nullable=False)
     
     role = Column(

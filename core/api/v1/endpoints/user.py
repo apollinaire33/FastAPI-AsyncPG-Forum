@@ -13,18 +13,12 @@ user_router = APIRouter()
 @cbv(user_router)
 class UserRouter:
     service: UserService = Depends(get_user_service)
-    permissions = {
-        'list': UserAdminPermission(),
-        'retrieve': UserAdminPermission(),
-        'put': UserOwnerPermission(),
-        'delete': AdminPermission(),
-    }
 
-    @user_router.get(path='/', status_code=status.HTTP_200_OK, response_model=List[UserSchema], dependencies=[Depends(permissions['list'])])
+    @user_router.get(path='/', status_code=status.HTTP_200_OK, response_model=List[UserSchema], dependencies=[Depends(UserAdminPermission())])
     async def list(self):
         return await self.service.list()
 
-    @user_router.get('/{id}', status_code=status.HTTP_200_OK, response_model=UserSchema, dependencies=[Depends(permissions['retrieve'])])
+    @user_router.get('/{id}', status_code=status.HTTP_200_OK, response_model=UserSchema, dependencies=[Depends(UserAdminPermission())])
     async def retrieve(self, id: int):
         return await self.service.get(id)
 
@@ -32,11 +26,11 @@ class UserRouter:
     async def create(self, payload: UserCreateSchema):
         return await self.service.create(payload)
 
-    @user_router.put('/{id}', status_code=status.HTTP_200_OK, response_model=UserSchema, dependencies=[Depends(permissions['put'])])
+    @user_router.put('/{id}', status_code=status.HTTP_200_OK, response_model=UserSchema, dependencies=[Depends(UserOwnerPermission())])
     async def update(self, id: int, payload: UserUpdateSchema):
         return await self.service.update(id, payload)
 
-    @user_router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT, response_class=Response, dependencies=[Depends(permissions['delete'])])
+    @user_router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT, response_class=Response, dependencies=[Depends(AdminPermission())])
     async def delete(self, id: int):
         return await self.service.delete(id)
 

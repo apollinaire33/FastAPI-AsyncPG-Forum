@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, Optional, Union
+from typing import Dict, Optional
 
 from fastapi import HTTPException, Depends
 from jose import jwt
@@ -8,28 +8,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.config import JOSE
 from db.database import get_db
 from models.user import User
-from schemas.user import UserLoginSchema, UserCreateSchema, UserUpdateSchema
+from schemas.user import UserLoginSchema
 from services.base import BaseService
 
 
 class UserService(BaseService[User]):
     def __init__(self, db_session: AsyncSession):
-        super().__init__(User, db_session)
-
-    async def create(self, payload: UserCreateSchema) -> Optional[User]: 
-        # need to optimize into one query with OR statement, maybe move duplicate validation on BaseService create & update level
-        # await self.duplicate_exists(self.model.username, payload.username, 'User')
-        await self.duplicate_exists(self.model.email, payload.email, 'User')
-        return await super().create(payload)
-
-    # won't work when 2 and more unique fields to update
-    async def update(self, id: Union[int, str], data: UserUpdateSchema) -> Optional[User]:
-        # await self.duplicate_exists(self.model.username, data.username, 'User')
-        await self.duplicate_exists(self.model.email, data.email, 'User')
-        return await super().update(id, data) 
+        super().__init__(User, User.id, db_session)
 
     async def login(self, data: UserLoginSchema) -> Optional[Dict[str, str]]:
-        user = await self.get_by_field(User.email == data.email)
+        user = await self.get(data.email, User.email)
         if not user.active:
             raise HTTPException(status_code=403, detail="User not active!")
 
